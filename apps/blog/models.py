@@ -38,7 +38,7 @@ class Post(models.Model):
     thumbnail = models.ImageField(
         default='default_post.jpg',
         blank=True,
-        upload_to='images/thumbnails',
+        upload_to='images/thumbnails/%Y/%m/%d/',
         validators=[FileExtensionValidator(allowed_extensions=(
             'png', 'jpg', 'webp', 'jpeg', 'gif'
         ))],
