@@ -22,14 +22,19 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Base apps.
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Self apps.
     'apps.blog.apps.BlogConfig',
     'apps.user_app.apps.UserAppConfig',
+    # Packages.
+    'mptt',
+    'django_mptt_admin',
 ]
 
 MIDDLEWARE = [
@@ -47,7 +52,7 @@ ROOT_URLCONF = 'blog_nextgen.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,4 +124,4 @@ MEDIA_ROOT = (BASE_DIR / 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'apps.user_app.NextgenUser'
+AUTH_USER_MODEL = 'user_app.NextgenUser'
