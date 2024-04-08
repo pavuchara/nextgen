@@ -6,11 +6,12 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('apps.blog.urls', namespace='blog'))
+    path('', include('apps.blog.urls', namespace='blog')),
 ]
 
 if settings.DEBUG is True:
+    import debug_toolbar
     urlpatterns += static(
-        settings.MEDIA_URL,
-        document_root=settings.MEDIA_ROOT,
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT,
     )
+    urlpatterns += (path('__debug__/', include(debug_toolbar.urls)), )

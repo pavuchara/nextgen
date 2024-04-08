@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+
+{% block title %}
+  {{ post.title }}
+{% endblock title %}
+
+{% block content %}
+  <img src="{{ post.thumbnail.url }}" alt="{{ post.title }}" width="200">
+  <h2>{{ post.title }}</h2>
+  <p>{{ post.description }}</p>
+  <p>{{ post.text }}</p>
+  <small>{{ post.create }}</small>
+  <hr>
+  <span>{{ post.category.title }}</span>
+{% endblock content %}

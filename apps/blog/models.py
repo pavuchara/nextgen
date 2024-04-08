@@ -1,9 +1,11 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.urls import reverse
 
-from apps.user_app.models import NextgenUser
 from mptt.models import MPTTModel, TreeForeignKey
 from apps import constants
+from apps.user_app.models import NextgenUser
+from apps.services.utils import unique_slugify
 
 
 class Post(models.Model):
@@ -20,8 +22,6 @@ class Post(models.Model):
     )
     slug = models.SlugField(
         max_length=constants.MAX_LENGTH,
-        blank=True,
-        unique=True,
         verbose_name='URL',
     )
     description = models.TextField(
@@ -84,6 +84,15 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse('blog:post_detail', kwargs={'slug': self.slug})
+
+    def save(self, *args, **kwargs):
+        """При создании новой записи генерируется уникалльынй slug."""
+        if not self.pk:
+            self.slug = unique_slugify(self, self.title)
+        super().save(*args, **kwargs)
+
 
 class Category(MPTTModel):
     """Древовидная модель категорий с вложенностью."""
@@ -120,3 +129,9 @@ class Category(MPTTModel):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        """При создании новой записи генерируется уникалльынй slug."""
+        if not self.pk:
+            self.slug = unique_slugify(self, self.title)
+        super().save(*args, **kwargs)
