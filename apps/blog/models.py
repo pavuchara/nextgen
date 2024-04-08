@@ -21,6 +21,7 @@ class Post(models.Model):
         verbose_name='Заголовок',
     )
     slug = models.SlugField(
+        unique=True,
         max_length=constants.MAX_LENGTH,
         verbose_name='URL',
     )
@@ -101,6 +102,7 @@ class Category(MPTTModel):
         verbose_name='Категоия'
     )
     slug = models.SlugField(
+        unique=True,
         max_length=constants.MAX_LENGTH,
         verbose_name='URL категории',
     )
@@ -130,8 +132,5 @@ class Category(MPTTModel):
     def __str__(self):
         return self.title
 
-    def save(self, *args, **kwargs):
-        """При создании новой записи генерируется уникалльынй slug."""
-        if not self.pk:
-            self.slug = unique_slugify(self, self.title)
-        super().save(*args, **kwargs)
+    def get_absolute_url(self):
+        return reverse('blog:category', kwargs={'slug': self.slug})
