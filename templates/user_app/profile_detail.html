@@ -31,7 +31,7 @@
                 <li>Имя: {{ profile.user.first_name }}</li>
               {% endif %}
               {% if profile.user.last_name %}
-                <li>Имя: {{ profile.user.lats_name }}</li>
+                <li>Фамилия: {{ profile.user.last_name }}</li>
               {% endif %}
               <li>Заходил: {{ profile.user.last_login }}</li>
               {% if profile.bio %}
@@ -48,8 +48,15 @@
           </div>
 
         </div>
-
       </div>
     </div>
+  </div>
+  <div>
+    {% if posts %}
+      <h3>Посты {{ profile.user.username }}:</h3>
+      {% include 'includes/posts.html' %}
+    {% else %}
+      <h3>{{ profile.user.username }} пока ничего не запостил(</h3>
+    {% endif %}
   </div>
 {% endblock %}

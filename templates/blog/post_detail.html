@@ -11,5 +11,12 @@
   <p>{{ post.text }}</p>
   <small>{{ post.create }}</small>
   <hr>
-  <span>{{ post.category.title }}</span>
+  <p>{{ post.category.title }}</p>
+
+  {% if user.is_authenticated and user == post.author %}
+    <a
+      href="{% url 'blog:post_update' slug=post.slug %}"
+      class="btn btn-dark"
+      >Редактировать</a>
+  {% endif %}
 {% endblock content %}

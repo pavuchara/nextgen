@@ -89,4 +89,4 @@ class UserProfile(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('user_app:user_profile', kwargs={'slug': self.slug})
+        return reverse('user_app:profile_detail', kwargs={'slug': self.slug})
