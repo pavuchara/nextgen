@@ -1,11 +1,18 @@
 from django.db import models
-from django.core.validators import FileExtensionValidator
 from django.urls import reverse
+from django.core.validators import FileExtensionValidator
 
-from mptt.models import MPTTModel, TreeForeignKey
+import os
 from apps import constants
+from mptt.models import MPTTModel, TreeForeignKey
 from apps.user_app.models import NextgenUser
-from apps.services.utils import unique_slugify
+from apps.services.utils import unique_slugify, file_directory_path
+
+
+class PostPublishedManager(models.Manager):
+    """Модельный менеджер для опубликованых постов."""
+    def get_queryset(self):
+        return super().get_queryset().filter(status='published')
 
 
 class Post(models.Model):
@@ -17,16 +24,16 @@ class Post(models.Model):
     )
 
     title = models.CharField(
-        max_length=constants.MAX_LENGTH,
+        max_length=constants.TITLE_MAX_LENGTH,
         verbose_name='Заголовок',
     )
     slug = models.SlugField(
         unique=True,
-        max_length=constants.MAX_LENGTH,
+        max_length=constants.SLUG_MAX_LENGTH,
         verbose_name='URL',
     )
     description = models.TextField(
-        max_length=500,
+        max_length=constants.DESC_MAX_LENGTH,
         verbose_name='Краткое описание',
     )
     text = models.TextField(verbose_name='Полное описание')
@@ -37,9 +44,10 @@ class Post(models.Model):
         verbose_name='Категория',
     )
     thumbnail = models.ImageField(
+        max_length=1000,
+        upload_to=file_directory_path,
         default='default_post.jpg',
         blank=True,
-        upload_to='images/thumbnails/%Y/%m/%d/',
         validators=[FileExtensionValidator(allowed_extensions=(
             'png', 'jpg', 'webp', 'jpeg', 'gif'
         ))],
@@ -75,6 +83,9 @@ class Post(models.Model):
     )
     fixed = models.BooleanField(default=False, verbose_name='Закреплено')
 
+    objects = models.Manager()
+    published = PostPublishedManager()
+
     class Meta:
         db_table = 'blog_post'
         ordering = ['-fixed', '-create']
@@ -89,25 +100,34 @@ class Post(models.Model):
         return reverse('blog:post_detail', kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
-        """При создании новой записи генерируется уникалльынй slug."""
+        """
+        При создании новой записи генерируется уникалльынй slug,
+        дополнительно старое фото будет удаляться.
+        """
         if not self.pk:
             self.slug = unique_slugify(self, self.title)
+        else:
+            old_post = Post.objects.get(pk=self.pk)
+            if (old_post.thumbnail != self.thumbnail
+                    and os.path.isfile(old_post.thumbnail.path)):
+                os.remove(old_post.thumbnail.path)
         super().save(*args, **kwargs)
 
 
 class Category(MPTTModel):
     """Древовидная модель категорий с вложенностью."""
+
     title = models.CharField(
-        max_length=constants.MAX_LENGTH,
+        max_length=constants.TITLE_MAX_LENGTH,
         verbose_name='Категоия'
     )
     slug = models.SlugField(
         unique=True,
-        max_length=constants.MAX_LENGTH,
+        max_length=constants.SLUG_MAX_LENGTH,
         verbose_name='URL категории',
     )
     description = models.TextField(
-        max_length=300,
+        max_length=constants.DESC_MAX_LENGTH,
         verbose_name='Описание категории',
     )
     parent = TreeForeignKey(
@@ -122,6 +142,7 @@ class Category(MPTTModel):
 
     class MPTTMeta:
         """Сортировка по вложенности."""
+
         order_insertion_by = ('title',)
 
     class Meta:
