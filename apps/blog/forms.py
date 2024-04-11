@@ -17,8 +17,8 @@ class PostCreateForm(forms.ModelForm):
         )
 
     def __init__(self, *args, **kwargs):
+        """Обновление стилей в форме."""
         super().__init__(*args, **kwargs)
-        # Добавляются стили Bootstrap.
         for field in self.fields:
             self.fields[field].widget.attrs.update({
                 'class': 'form-control',
@@ -34,8 +34,8 @@ class PostUpdateForm(PostCreateForm):
         fields = PostCreateForm.Meta.fields + ('fixed',)
 
     def __init__(self, *args, **kwargs):
+        """Обновление стилей в форме."""
         super().__init__(*args, **kwargs)
-        # Добавляются стили Bootstrap.
         self.fields['fixed'].widget.attrs.update({
             'class': 'form-check-input'
         })

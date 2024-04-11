@@ -5,19 +5,17 @@
     <div class="card-body">
 
       <div class="card-title nth-card-title">
-        <h4>Добавление поста:</h4>
+        <h4>Зарегистрируйтесь:</h4>
       </div>
 
-      <form method="POST" enctype="multipart/form-data">
+      <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <div>
-          <button type="submit" class="btn btn-dark">
-            Запостить
-          </button>
-        </div>
+        <button type="submit" class="btn btn-dark mt-2">
+          Зарегистрироваться
+        </button>
       </form>
-      
+
     </div>
   </div>
 {% endblock content %}

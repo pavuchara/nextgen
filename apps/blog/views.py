@@ -1,11 +1,14 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
+from django.contrib import messages
 from django.db.models import Q
 
 from .models import Post, Category
 from .forms import PostCreateForm, PostUpdateForm
+from apps.services.mixins import AuthorRequiredMixin
 
 
 class PostListView(ListView):
@@ -108,14 +111,15 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
-    # После добавления возможности залогиниться надо будет дописать.
-    # def dispatch(self, request, *args, **kwargs):
-    #     if not request.user.is_authenticated:
-    #         return self.handle_no_permission()
-    #     return super().dispatch(request, *args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.info(request,
+                          'Для создания записи, необходимо авторизироваться')
+            return redirect('user_app:login')
+        return super().dispatch(request, *args, **kwargs)
 
 
-class PostUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+class PostUpdateView(AuthorRequiredMixin, SuccessMessageMixin, UpdateView):
     """Представление: Обновление материалов в посте."""
 
     model = Post
@@ -123,7 +127,7 @@ class PostUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     context_object_name = 'post'
     template_name = 'blog/post_update.html'
     success_message = 'Запись была успешно обновлена!'
-    
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = f'Обновление поста: {self.object.title}'

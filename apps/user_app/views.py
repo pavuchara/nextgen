@@ -1,12 +1,19 @@
 from django.db import transaction
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView, LogoutView
+from django.views.generic import DetailView, UpdateView, CreateView
 
-from .models import UserProfile
-from .forms import UserProfileUpdateForm, NextgenUserUpdateForm
+from .models import UserProfile, NextgenUser
 from apps.blog.models import Post
+from .forms import (
+    UserProfileUpdateForm,
+    UserUpdateForm,
+    UserRegisterForm,
+    UserLoginForm,
+)
 
 
 class UserProfileView(DetailView):
@@ -64,12 +71,12 @@ class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
         context['title'] = (f'Редактирование профиля пользователя'
                             f'{self.request.user.username}')
         if self.request.POST:
-            context['user_form'] = NextgenUserUpdateForm(
+            context['user_form'] = UserUpdateForm(
                 self.request.POST,
                 instance=self.request.user,
             )
         else:
-            context['user_form'] = NextgenUserUpdateForm(
+            context['user_form'] = UserUpdateForm(
                 instance=self.request.user,
             )
         return context
@@ -91,3 +98,39 @@ class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
             'user_app:profile_detail',
             kwargs={'slug': self.request.user.userprofile.slug},
         )
+
+
+class UserRegisterView(SuccessMessageMixin, CreateView):
+    """Представление: регистрация пользователя."""
+
+    model = NextgenUser
+    form_class = UserRegisterForm
+    success_url = reverse_lazy('blog:home')
+    template_name = 'user_app/user_register.html'
+    success_message = 'Успешная регистрация! Можете авторизоваться на сайте.'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Регистрация'
+        return context
+
+
+class UserLoginView(SuccessMessageMixin, LoginView):
+    """Представление: Авторизация пользователя."""
+
+    form_class = UserLoginForm
+    next_page = 'blog:home'
+    template_name = 'user_app/user_login.html'
+    success_message = 'Добро пожаловать!'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Авторизация'
+        return context
+
+
+class UserLogoutView(SuccessMessageMixin, LogoutView):
+    """Представление: Выход из системы."""
+
+    success_message = 'Всего доброго!'
+    next_page = 'blog:home'
