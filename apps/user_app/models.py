@@ -44,13 +44,13 @@ class UserProfile(models.Model):
         verbose_name='Пользователь',
     )
     slug = models.SlugField(
-        max_length=constants.TITLE_MAX_LENGTH,
+        max_length=constants.SLUG_MAX_LENGTH,
         blank=True,
         unique=True,
         verbose_name='URL',
     )
     avatar = models.ImageField(
-        max_length=1000,
+        max_length=constants.PATH_MAX_LENGTH,
         upload_to=file_directory_path,
         default='images/default_user.jpg',
         blank=True,
@@ -59,7 +59,7 @@ class UserProfile(models.Model):
         ))],
     )
     bio = models.TextField(
-        max_length=constants.DESC_MAX_LENGTH,
+        max_length=constants.BIO_MAX_LENGTH,
         blank=True,
         verbose_name='О себе',
     )

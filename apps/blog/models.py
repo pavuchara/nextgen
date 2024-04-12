@@ -44,7 +44,7 @@ class Post(models.Model):
         verbose_name='Категория',
     )
     thumbnail = models.ImageField(
-        max_length=1000,
+        max_length=constants.PATH_MAX_LENGTH,
         upload_to=file_directory_path,
         default='default_post.jpg',
         blank=True,
@@ -155,3 +155,63 @@ class Category(MPTTModel):
 
     def get_absolute_url(self):
         return reverse('blog:category', kwargs={'slug': self.slug})
+
+
+class Comment(MPTTModel):
+    """Модель древовыидных комментариев."""
+
+    STATUS_OPTIONS = (
+        ('published', 'Опубликовано'),
+        ('draft', 'Черновик')
+    )
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='Пост',
+    )
+    author = models.ForeignKey(
+        NextgenUser,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='Автор',
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_OPTIONS,
+        default='published',
+        verbose_name='Статус',
+    )
+    create = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Время добавления'
+    )
+    body = models.TextField(
+        null=False,
+        blank=False,
+        max_length=constants.COMM_MAX_LENGTH,
+
+    )
+    parent = TreeForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='children',
+        on_delete=models.CASCADE,
+        verbose_name='Родительский комментарий',
+    )
+
+    class MTTMeta:
+        """
+        Сортировка по вложенности
+        """
+        order_insertion_by = ('-create',)
+
+    class Meta:
+        ordering = ('-create',)
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self):
+        return f'{self.author}:{self.body}'

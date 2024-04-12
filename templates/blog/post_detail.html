@@ -1,22 +1,42 @@
 {% extends 'main.html' %}
+{% load mptt_tags %}
+{% load static %}
 
 {% block title %}
   {{ post.title }}
 {% endblock title %}
 
 {% block content %}
-  <img src="{{ post.thumbnail.url }}" alt="{{ post.title }}" width="200">
-  <h2>{{ post.title }}</h2>
-  <p>{{ post.description }}</p>
-  <p>{{ post.text }}</p>
-  <small>{{ post.create }}</small>
-  <hr>
-  <p>{{ post.category.title }}</p>
+  <div class="card mb-3">
+    <div class="row">
 
-  {% if user.is_authenticated and user == post.author %}
-    <a
-      href="{% url 'blog:post_update' slug=post.slug %}"
-      class="btn btn-dark"
-      >Редактировать</a>
-  {% endif %}
+      <div class="col-4">
+        <img src="{{ post.thumbnail.url }}" class="card-img-top" alt="{{ post.title }}">
+      </div>
+
+      <div class="col-8">
+        <div class="card-body">
+          <h5>{{ post.title }}</h5>
+          <p class="card-text">{{ post.description }}</p>
+          <p class="card-text">{{ post.text }}</p>
+          Категория:
+          <a href="{% url 'blog:category' post.category.slug %}">
+            {{ post.category.title }}
+          </a>
+          / Добавил: {{ post.author.username }} /
+          <small>{{ post.create }}</small>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card border-0">
+    <div class="card-body">
+      <h5 class="card-title">
+        Комментарии:
+      </h5>
+      {% include 'blog/comments/comments_list.html' %}
+    </div>
+  </div>
 {% endblock content %}

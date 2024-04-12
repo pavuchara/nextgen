@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Post
+from .models import Post, Comment
 
 
 class PostCreateForm(forms.ModelForm):
@@ -39,3 +39,24 @@ class PostUpdateForm(PostCreateForm):
         self.fields['fixed'].widget.attrs.update({
             'class': 'form-check-input'
         })
+
+
+class CommentCreateForm(forms.ModelForm):
+    """Форма для добавления комментария."""
+    parent = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput,
+    )
+    body = forms.CharField(
+        label='',
+        widget=forms.Textarea(attrs={
+            'cols': 30,
+            'rows': 5,
+            'placeholder': 'Комментарий',
+            'class': 'form-control'
+        })
+    )
+
+    class Meta:
+        model = Comment
+        fields = ('body',)

@@ -1,13 +1,14 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
-from django.contrib import messages
 from django.db.models import Q
+from django.http import JsonResponse
 
-from .models import Post, Category
-from .forms import PostCreateForm, PostUpdateForm
+from .models import Post, Category, Comment
+from .forms import PostCreateForm, PostUpdateForm, CommentCreateForm
 from apps.services.mixins import AuthorRequiredMixin
 
 
@@ -44,7 +45,6 @@ class PostDetailView(DetailView):
     """Представление: конкретный пост."""
 
     model = Post
-    paginate_by = 4
     context_object_name = 'post'
     template_name = 'blog/post_detail.html'
 
@@ -57,6 +57,7 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = self.object.title
+        context['form'] = CommentCreateForm
         return context
 
 
@@ -136,3 +137,63 @@ class PostUpdateView(AuthorRequiredMixin, SuccessMessageMixin, UpdateView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
+
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    """Предстваление: Добавление комментария."""
+
+    form_class = CommentCreateForm
+
+    def is_ajax(self):
+        return self.request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    def form_invalid(self, form):
+        if self.is_ajax():
+            return JsonResponse({'error': form.errors}, status=400)
+        return super().form_invalid(form)
+
+    def form_valid(self, form):
+        comment = form.save(commit=False)
+        comment.post_id = self.kwargs.get('pk')
+        comment.author = self.request.user
+        comment.parent_id = form.cleaned_data.get('parent')
+        comment.save()
+
+        if self.is_ajax():
+            return JsonResponse({
+                'is_child': comment.is_child_node(),
+                'id': comment.id,
+                'author': comment.author.username,
+                'parent_id': comment.parent_id,
+                'avatar': comment.author.userprofile.avatar.url,
+                'body': comment.body,
+                'get_absolute_url': comment.author.userprofile.get_absolute_url(),
+                'create': comment.create.strftime(
+                    '%Y-%b-%d %H:%M:%S'
+                ),
+            }, status=200)
+        return redirect(comment.post.get_absolute_url())
+
+    def handle_no_permission(self):
+        return JsonResponse(
+            {'error': 'Необходимо авторизоваться для добавления комментариев'},
+            status=400
+        )
+
+
+class CommentDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+
+    model = Comment
+    success_message = 'Комментарий удален!'
+    pk_url_kwarg = 'id'
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.request.user == self.object.author:
+            self.object.delete()
+            return JsonResponse({'message': self.success_message}, status=200)
+        else:
+            return JsonResponse(
+                {'error': 'Вы не имеете права удалять этот комментарий'},
+                status=403,
+            )
