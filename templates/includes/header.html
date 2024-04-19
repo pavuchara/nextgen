@@ -27,13 +27,20 @@
           <li>
             <a
               class="dropdown-item"
+              href="{% url 'user_app:profile_edit' %}"
+              >Редактировать профиль
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item"
               href="{% url 'blog:post_create' %}"
               >Добавить статью
             </a>
           </li>
           <li><hr class="dropdown-divider"></li>
           <li>
-            <form action="{% url 'user_app:logout' %}" method="POST">
+            <form action="{% url 'user_app:logout' %}" method="post">
               {% csrf_token %}
               <a href="#" class="dropdown-item" onclick="parentNode.submit();">Выход</a>
             </form>

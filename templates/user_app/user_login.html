@@ -1,4 +1,5 @@
 {% extends 'main.html' %}
+{% load django_bootstrap5 %}
 
 {% block content %}
   <div class="card mb-3 border-0 nth-shadow">
@@ -10,7 +11,7 @@
 
       <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
+        {% bootstrap_form form %}
         <button type="submit" class="btn btn-dark">
           Авторизоваться
         </button>

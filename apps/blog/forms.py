@@ -14,16 +14,9 @@ class PostCreateForm(forms.ModelForm):
             'description',
             'text',
             'category',
+            'fixed',
+            'tags',
         )
-
-    def __init__(self, *args, **kwargs):
-        """Обновление стилей в форме."""
-        super().__init__(*args, **kwargs)
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({
-                'class': 'form-control',
-                'autocomplete': 'off',
-            })
 
 
 class PostUpdateForm(PostCreateForm):
@@ -33,16 +26,10 @@ class PostUpdateForm(PostCreateForm):
         model = PostCreateForm.Meta.model
         fields = PostCreateForm.Meta.fields + ('fixed',)
 
-    def __init__(self, *args, **kwargs):
-        """Обновление стилей в форме."""
-        super().__init__(*args, **kwargs)
-        self.fields['fixed'].widget.attrs.update({
-            'class': 'form-check-input'
-        })
-
 
 class CommentCreateForm(forms.ModelForm):
     """Форма для добавления комментария."""
+
     parent = forms.IntegerField(
         required=False,
         widget=forms.HiddenInput,

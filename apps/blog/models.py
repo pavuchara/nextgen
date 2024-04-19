@@ -1,12 +1,16 @@
 from django.db import models
 from django.urls import reverse
 from django.core.validators import FileExtensionValidator
+from django.contrib.auth import get_user_model
+from taggit.managers import TaggableManager
 
 import os
-from apps import constants
+from apps.services import constants
 from mptt.models import MPTTModel, TreeForeignKey
-from apps.user_app.models import NextgenUser
 from apps.services.utils import unique_slugify, file_directory_path
+
+# Получение модели пользователя.
+NextgenUser = get_user_model()
 
 
 class PostPublishedManager(models.Manager):
@@ -53,6 +57,10 @@ class Post(models.Model):
         ))],
         verbose_name='Изображение поста',
     )
+    tags = TaggableManager(
+        verbose_name='Теги',
+        help_text='Список тегов, разделенный запятыми.',
+        )
     status = models.CharField(
         max_length=10,
         choices=STATUS_OPTIONS,
@@ -101,8 +109,9 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        При создании новой записи генерируется уникалльный slug,
-        дополнительно старое фото будет удаляться.
+        При создании новой записи генерируется уникалльный slug, если он
+        совпадает с тем что уже есть.
+        При обновлении фото, старое будет удаляться.
         """
         if not self.pk:
             self.slug = unique_slugify(self, self.title)
@@ -203,9 +212,6 @@ class Comment(MPTTModel):
     )
 
     class MTTMeta:
-        """
-        Сортировка по вложенности
-        """
         order_insertion_by = ('-create',)
 
     class Meta:

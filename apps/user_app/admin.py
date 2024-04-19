@@ -1,11 +1,14 @@
 from django.contrib import admin
-from .models import NextgenUser, UserProfile
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth import get_user_model
 
+from .models import UserProfile
 
-@admin.register(NextgenUser)
-class NextgenUserAdmin(admin.ModelAdmin):
-    """Админ-панель пользователя."""
-    pass
+# Получение модели пользователя.
+NextgenUser = get_user_model()
+
+# Регистрация переопределенной модели пользователя
+admin.site.register(NextgenUser, UserAdmin)
 
 
 @admin.register(UserProfile)

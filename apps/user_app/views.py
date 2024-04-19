@@ -1,13 +1,14 @@
 from django.db import transaction
 from django.urls import reverse_lazy
-from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.views.generic import DetailView, UpdateView, CreateView
+from django.views.generic import UpdateView, CreateView, ListView
 
-from .models import UserProfile, NextgenUser
-from apps.blog.models import Post
+from apps.services.mixins import PostListMixin
+from .models import UserProfile
 from .forms import (
     UserProfileUpdateForm,
     UserUpdateForm,
@@ -15,44 +16,31 @@ from .forms import (
     UserLoginForm,
 )
 
+# Получение модели пользователя.
+NextgenUser = get_user_model()
 
-class UserProfileView(DetailView):
+
+class UserProfileView(PostListMixin, ListView):
     """Представление: Профиль пользователя с его постами."""
 
-    model = UserProfile
     template_name = 'user_app/profile_detail.html'
-    context_object_name = 'profile'
 
     def get_queryset(self):
-        queryset = UserProfile.objects.select_related('user')
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        """Получение пользователя и его постов."""
-        context = super().get_context_data(**kwargs)
-        posts = Post.published.select_related(
+        queryset = self.model.published.select_related(
             'author',
             'author__userprofile',
             'category',
-        ).filter(author__username=self.object)
-        paginator_context = self.paginate_user_posts(posts)
-        context.update(paginator_context)
-        context['title'] = f'Профиль: {self.object}'
-        return context
+        ).filter(author__username=self.kwargs.get('slug'))
+        return queryset
 
-    def paginate_user_posts(self, posts):
-        """Метод пагинации."""
-        page_number = self.request.GET.get('page', 1)
-        paginator = Paginator(posts, 2)
-        posts = paginator.get_page(page_number)
-        context = {
-            'paginator': paginator,
-            'is_paginated': True,
-            'paginator_range': paginator.page_range,
-            'posts': posts,
-        }
-        if paginator.num_pages < 2:
-            context['is_paginated'] = False
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = get_object_or_404(
+            UserProfile.objects.select_related('user'),
+            user__username=self.kwargs.get('slug')
+        )
+        context['profile'] = profile
+        context['title'] = f'Профиль: {self.kwargs.get('slug')}'
         return context
 
 
@@ -129,8 +117,7 @@ class UserLoginView(SuccessMessageMixin, LoginView):
         return context
 
 
-class UserLogoutView(SuccessMessageMixin, LogoutView):
+class UserLogoutView(LogoutView):
     """Представление: Выход из системы."""
 
-    success_message = 'Всего доброго!'
     next_page = 'blog:home'

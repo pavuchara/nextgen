@@ -5,7 +5,7 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import FileExtensionValidator
 
 import os
-from apps import constants
+from apps.services import constants
 from apps.services.utils import unique_slugify, file_directory_path
 
 
@@ -22,6 +22,7 @@ class NextgenUser(AbstractUser):
         error_messages={
             "unique": "Пользователь с таким именем уже сущестует",
         },
+        verbose_name='Юзернейм',
     )
 
     class Meta:
@@ -57,6 +58,7 @@ class UserProfile(models.Model):
         validators=[FileExtensionValidator(allowed_extensions=(
             'png', 'jpg', 'jpeg'
         ))],
+        verbose_name='Аватар',
     )
     bio = models.TextField(
         max_length=constants.BIO_MAX_LENGTH,

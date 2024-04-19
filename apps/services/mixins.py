@@ -2,6 +2,9 @@ from django.contrib.auth.mixins import AccessMixin
 from django.contrib import messages
 from django.shortcuts import redirect
 
+from apps.blog.models import Post
+from apps.services.constants import PAGINATE_POSTS_COUNT
+
 
 class AuthorRequiredMixin(AccessMixin):
     """Миксин: доступы только для автора или персонала."""
@@ -12,6 +15,14 @@ class AuthorRequiredMixin(AccessMixin):
         elif ((request.user != self.get_object().author)
               and not request.user.is_staff):
             messages.info(request,
-                          'Редактирование статьи доступно только автору')
+                          'Редактирование доступно только автору')
             return redirect('blog:home')
         return super().dispatch(request, *args, **kwargs)
+
+
+class PostListMixin:
+    """Миксин: Модель поста с пагинацией."""
+
+    model = Post
+    paginate_by = PAGINATE_POSTS_COUNT
+    context_object_name = 'posts'

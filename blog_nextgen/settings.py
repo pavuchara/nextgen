@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'mptt',
     'django_mptt_admin',
     'debug_toolbar',
+    'django_bootstrap5',
+    'taggit',
 ]
 
 MIDDLEWARE = [
@@ -121,10 +123,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
+# Статика.
 STATIC_URL = 'static/'
 STATIC_ROOT = (BASE_DIR / 'static')
-STATICFILES_DIRS = [BASE_DIR / 'templates/js/']
+STATICFILES_DIRS = [BASE_DIR / STATIC_URL / 'js']
 
+# Медиа.
 MEDIA_URL = 'media/'
 MEDIA_ROOT = (BASE_DIR / 'media')
 
@@ -133,4 +137,11 @@ MEDIA_ROOT = (BASE_DIR / 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Переопределенная модель пользователя.
 AUTH_USER_MODEL = 'user_app.NextgenUser'
+
+# Переадресация на главную после логина.
+LOGIN_REDIRECT_URL = 'pages:homepage'
+
+# Генерацию слагов для тегов с поддержкой транслитерации.
+TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING = True

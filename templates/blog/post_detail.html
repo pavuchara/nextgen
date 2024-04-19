@@ -25,6 +25,10 @@
           </a>
           / Добавил: {{ post.author.username }} /
           <small>{{ post.create }}</small>
+          {% if request.user == post.author %}
+            <a class="btn btn-sm btn-dark m-2" href="{% url 'blog:post_update' post.slug %}">Редактировать</a>
+            <a class="btn btn-sm btn-danger m-2" href="{% url 'blog:post_delete' post.slug %}">Удалить</a>
+          {% endif %}
         </div>
       </div>
 
