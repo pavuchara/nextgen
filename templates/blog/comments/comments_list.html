@@ -59,6 +59,10 @@
 
     </div>
   </div>
+{% else %}
+  <div class="m-3">
+    <a href="{% url 'user_app:login' %}">Авторизируйтесь</a> чтобы оставить комментарий
+  </div>
 {% endif %}
 
 {% block script %}

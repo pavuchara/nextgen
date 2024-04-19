@@ -9,7 +9,7 @@ urlpatterns = [
     path('user/edit/',
          views.UserProfileUpdateView.as_view(),
          name='profile_edit'),
-    path('user/<slug:slug>/',
+    path('user/<slug:username>/',
          views.UserProfileView.as_view(),
          name='profile_detail'),
     path('register/',

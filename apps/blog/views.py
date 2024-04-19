@@ -14,9 +14,14 @@ from django.views.generic import (
     DeleteView,
 )
 
+from taggit.models import Tag
 from .models import Post, Category, Comment
 from .forms import PostCreateForm, PostUpdateForm, CommentCreateForm
-from apps.services.mixins import AuthorRequiredMixin, PostListMixin
+from apps.services.mixins import (
+    AuthorRequiredMixin,
+    PostListMixin,
+    WaringFormMessageMixin,
+)
 
 
 class PostListView(PostListMixin, ListView):
@@ -25,16 +30,31 @@ class PostListView(PostListMixin, ListView):
     tempalte_name = 'blog/post_list.html'
 
     def get_queryset(self):
-        queryset = self.model.published.select_related(
-            'author',
-            'author__userprofile',
-            'category',
-        )
+        queryset = self.model.published_related.all()
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Главная страница'
+        return context
+
+
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+    tag = None
+
+    def get_queryset(self):
+        self.tag = Tag.objects.get(slug=self.kwargs['tag'])
+        queryset = self.model.published_related.filter(
+            tags__slug=self.tag.slug)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Статьи по тегу{self.tag.name}'
         return context
 
 
@@ -74,11 +94,7 @@ class CategoryListView(PostListMixin, ListView):
             slug=self.kwargs.get('slug'),
         )
         sub_cat = Category.objects.filter(parent=self.category)
-        queryset = self.model.published.select_related(
-            'category',
-            'author',
-            'author__userprofile'
-        ).filter(
+        queryset = self.model.published_related.filter(
             (Q(category=self.category) | Q(category__in=sub_cat)),
         ).order_by()
         return queryset
@@ -89,7 +105,7 @@ class CategoryListView(PostListMixin, ListView):
         return context
 
 
-class PostCreateView(LoginRequiredMixin, CreateView):
+class PostCreateView(LoginRequiredMixin, WaringFormMessageMixin, CreateView):
     """Представление: Создание поста."""
 
     model = Post
@@ -106,7 +122,10 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class PostUpdateView(AuthorRequiredMixin, SuccessMessageMixin, UpdateView):
+class PostUpdateView(AuthorRequiredMixin,
+                     WaringFormMessageMixin,
+                     SuccessMessageMixin,
+                     UpdateView):
     """Представление: Обновление материалов в посте."""
 
     model = Post
@@ -132,7 +151,7 @@ class PostDeleteView(AuthorRequiredMixin, DeleteView):
     template_name = 'blog/post_delete.html'
 
 
-class CommentCreateView(LoginRequiredMixin, CreateView):
+class CommentCreateView(LoginRequiredMixin, WaringFormMessageMixin, CreateView):
     """Предстваление: Добавление комментария."""
 
     form_class = CommentCreateForm

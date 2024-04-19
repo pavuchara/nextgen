@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_bootstrap5',
     'taggit',
+    'django_recaptcha',
+    'ckeditor_uploader',
+    'ckeditor'
 ]
 
 MIDDLEWARE = [
@@ -132,6 +135,15 @@ STATICFILES_DIRS = [BASE_DIR / STATIC_URL / 'js']
 MEDIA_URL = 'media/'
 MEDIA_ROOT = (BASE_DIR / 'media')
 
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+
+CKEDITOR_CONFIGS = {
+    'awesome_ckeditor': {
+        'toolbar': 'full',
+        'height': 300,
+    },
+}
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -145,3 +157,7 @@ LOGIN_REDIRECT_URL = 'pages:homepage'
 
 # Генерацию слагов для тегов с поддержкой транслитерации.
 TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING = True
+
+# reCAPTCHA secret keys
+RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_PUBLIC_KEY'))
+RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_PRIVATE_KEY'))

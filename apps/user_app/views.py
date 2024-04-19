@@ -26,21 +26,18 @@ class UserProfileView(PostListMixin, ListView):
     template_name = 'user_app/profile_detail.html'
 
     def get_queryset(self):
-        queryset = self.model.published.select_related(
-            'author',
-            'author__userprofile',
-            'category',
-        ).filter(author__username=self.kwargs.get('slug'))
+        queryset = self.model.published_related.filter(
+            author__username=self.kwargs.get('username'))
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile = get_object_or_404(
             UserProfile.objects.select_related('user'),
-            user__username=self.kwargs.get('slug')
+            user__username=self.kwargs.get('username')
         )
         context['profile'] = profile
-        context['title'] = f'Профиль: {self.kwargs.get('slug')}'
+        context['title'] = f'Профиль: {self.kwargs.get('username')}'
         return context
 
 
@@ -57,7 +54,7 @@ class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = (f'Редактирование профиля пользователя'
-                            f'{self.request.user.username}')
+                            f' {self.request.user.username}')
         if self.request.POST:
             context['user_form'] = UserUpdateForm(
                 self.request.POST,
@@ -84,7 +81,7 @@ class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy(
             'user_app:profile_detail',
-            kwargs={'slug': self.request.user.userprofile.slug},
+            kwargs={'username': self.object.user.username},
         )
 
 

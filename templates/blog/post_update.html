@@ -11,6 +11,7 @@
 
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        {{ form.media }}
         {% bootstrap_form form %}
         <div class="d-grid gap-2 d-md-block mt-2">
           <button type="submit" class="btn btn-dark">

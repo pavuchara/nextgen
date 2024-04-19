@@ -15,4 +15,4 @@ admin.site.register(NextgenUser, UserAdmin)
 class UserProfile(admin.ModelAdmin):
     """Админ-панель профиля пользователя."""
 
-    list_display = ('user', 'slug')
+    list_display = ('user', )

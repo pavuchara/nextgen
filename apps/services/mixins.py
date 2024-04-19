@@ -26,3 +26,13 @@ class PostListMixin:
     model = Post
     paginate_by = PAGINATE_POSTS_COUNT
     context_object_name = 'posts'
+
+
+class WaringFormMessageMixin:
+    """Миксин: Вывод информации об ошибке в форме."""
+
+    def form_invalid(self, form):
+        messages.add_message(
+            self.request, messages.WARNING, form.errors.as_text()
+        )
+        return super().form_invalid(form)

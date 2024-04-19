@@ -2,6 +2,7 @@ from django import forms
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django_recaptcha.fields import ReCaptchaField
 
 from .models import UserProfile
 
@@ -17,15 +18,6 @@ class UserUpdateForm(forms.ModelForm):
         model = NextgenUser
         fields = ('username', 'email', 'first_name', 'last_name')
 
-    def clean_email(self):
-        """Проверка E-mail на уникальнсоть."""
-        email = self.cleaned_data.get('email')
-        username = self.cleaned_data.get('username')
-        if email and NextgenUser.objects.filter(
-                email=email).exclude(username=username).exists():
-            raise forms.ValidationError('Пользователь с таким E-mail '
-                                        'уже зарегистрирован')
-
 
 class UserProfileUpdateForm(forms.ModelForm):
     """Форма: обновление профиля пользователя."""
@@ -38,6 +30,11 @@ class UserProfileUpdateForm(forms.ModelForm):
         label='Аватар',
     )
 
+    # recaptcha = ReCaptchaField(
+    #     label='Капча',
+    #     error_messages={'required': 'Пожалуйста, пройдите капчу'},
+    # )
+
     class Meta:
         model = UserProfile
         fields = ('avatar', 'bio')
@@ -46,24 +43,21 @@ class UserProfileUpdateForm(forms.ModelForm):
 class UserRegisterForm(UserCreationForm):
     """Форма: регистрация пользователя."""
 
+    recaptcha = ReCaptchaField(
+        label='Капча',
+        error_messages={'required': 'Пожалуйста, пройдите капчу'},
+    )
+
     class Meta(UserCreationForm.Meta):
         model = NextgenUser
         fields = UserCreationForm.Meta.fields + (
             'email', 'first_name', 'last_name')
 
-    def clean_email(self):
-        """Проверка E-mail на уникальность."""
-        email = self.cleaned_data.get('email')
-        username = self.cleaned_data.get('username')
-        if email and NextgenUser.objects.filter(
-             email=email).exclude(username=username).exists():
-            raise forms.ValidationError(
-                'Пользователь с таким E-mail уже есть в системе.'
-            )
-        return email
-
 
 class UserLoginForm(AuthenticationForm):
     """Форма авторизации на сайте."""
 
-    pass
+    recaptcha = ReCaptchaField(
+        label='Капча',
+        error_messages={'required': 'Пожалуйста, пройдите капчу'},
+    )

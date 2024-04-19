@@ -17,22 +17,32 @@
       <div class="col-8">
         <div class="card-body">
           <h5>{{ post.title }}</h5>
-          <p class="card-text">{{ post.description }}</p>
-          <p class="card-text">{{ post.text }}</p>
+          <p class="card-text">{{ post.description|safe }}</p>
+          <p class="card-text">{{ post.text|safe }}</p>
           Категория:
           <a href="{% url 'blog:category' post.category.slug %}">
             {{ post.category.title }}
           </a>
           / Добавил: {{ post.author.username }} /
           <small>{{ post.create }}</small>
+
           {% if request.user == post.author %}
-            <a class="btn btn-sm btn-dark m-2" href="{% url 'blog:post_update' post.slug %}">Редактировать</a>
-            <a class="btn btn-sm btn-danger m-2" href="{% url 'blog:post_delete' post.slug %}">Удалить</a>
+            <a class="btn btn-sm btn-dark mt-2" href="{% url 'blog:post_update' post.slug %}">Редактировать</a>
+            <a class="btn btn-sm btn-danger mt-2" href="{% url 'blog:post_delete' post.slug %}">Удалить</a>
           {% endif %}
         </div>
       </div>
 
     </div>
+
+    {% if post.tags.all %}
+    <div class="card-footer border-0">
+        Теги записи:
+        {% for tag in post.tags.all %}
+        <a href="{% url 'blog:posts_by_tag' tag.slug %}">#{{ tag }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
   </div>
 
   <div class="card border-0">

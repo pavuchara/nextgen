@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth import get_user_model
 from taggit.managers import TaggableManager
+from ckeditor.fields import RichTextField
 
 import os
 from apps.services import constants
@@ -17,6 +18,19 @@ class PostPublishedManager(models.Manager):
     """Модельный менеджер для опубликованых постов."""
     def get_queryset(self):
         return super().get_queryset().filter(status='published')
+
+
+# published_related
+class PostPublishedRealtedManager(PostPublishedManager):
+    """Модельный менеджер для опубликованых постов со связанными полями."""
+
+    def get_queryset(self):
+        queryset = super().get_queryset().select_related(
+            'author',
+            'author__userprofile',
+            'category',
+        ).prefetch_related('tags')
+        return queryset
 
 
 class Post(models.Model):
@@ -36,11 +50,15 @@ class Post(models.Model):
         max_length=constants.SLUG_MAX_LENGTH,
         verbose_name='URL',
     )
-    description = models.TextField(
+    description = RichTextField(
+        config_name='awesome_ckeditor',
         max_length=constants.DESC_MAX_LENGTH,
         verbose_name='Краткое описание',
     )
-    text = models.TextField(verbose_name='Полное описание')
+    text = RichTextField(
+        config_name='awesome_ckeditor',
+        verbose_name='Полное описание',
+    )
     category = TreeForeignKey(
         'Category',
         on_delete=models.PROTECT,
@@ -93,6 +111,7 @@ class Post(models.Model):
 
     objects = models.Manager()
     published = PostPublishedManager()
+    published_related = PostPublishedRealtedManager()
 
     class Meta:
         db_table = 'blog_post'

@@ -46,8 +46,6 @@ class UserProfile(models.Model):
     )
     slug = models.SlugField(
         max_length=constants.SLUG_MAX_LENGTH,
-        blank=True,
-        unique=True,
         verbose_name='URL',
     )
     avatar = models.ImageField(
@@ -91,4 +89,4 @@ class UserProfile(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('user_app:profile_detail', kwargs={'slug': self.slug})
+        return reverse('user_app:profile_detail', kwargs={'username': self.user.username})

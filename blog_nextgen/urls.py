@@ -7,7 +7,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.blog.urls', namespace='blog')),
-    path('', include('apps.user_app.urls', namespace='user_app'))
+    path('', include('apps.user_app.urls', namespace='user_app')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 
 if settings.DEBUG is True:

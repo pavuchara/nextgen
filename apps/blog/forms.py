@@ -1,10 +1,16 @@
 from django import forms
+from django_recaptcha.fields import ReCaptchaField
 
 from .models import Post, Comment
 
 
 class PostCreateForm(forms.ModelForm):
     """Форма для добавления постов."""
+
+    recaptcha = ReCaptchaField(
+        label='Капча',
+        error_messages={'required': 'Пожалуйста, пройдите капчу'},
+    )
 
     class Meta:
         model = Post
@@ -42,6 +48,11 @@ class CommentCreateForm(forms.ModelForm):
             'placeholder': 'Комментарий',
             'class': 'form-control'
         })
+    )
+
+    recaptcha = ReCaptchaField(
+        label='Капча',
+        error_messages={'required': 'Пожалуйста, пройдите капчу'},
     )
 
     class Meta:
