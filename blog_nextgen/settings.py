@@ -129,7 +129,10 @@ USE_TZ = True
 # Статика.
 STATIC_URL = 'static/'
 STATIC_ROOT = (BASE_DIR / 'static')
-STATICFILES_DIRS = [BASE_DIR / STATIC_URL / 'js']
+STATICFILES_DIRS = [
+    BASE_DIR / STATIC_URL / 'js_back',
+    BASE_DIR / STATIC_URL / 'js_bootstrap',
+]
 
 # Медиа.
 MEDIA_URL = 'media/'
@@ -161,3 +164,11 @@ TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING = True
 # reCAPTCHA secret keys
 RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_PUBLIC_KEY'))
 RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_PRIVATE_KEY'))
+
+# Файловая система кеширования.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': (BASE_DIR / 'cache')
+    }
+}

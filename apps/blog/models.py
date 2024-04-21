@@ -4,6 +4,7 @@ from django.core.validators import FileExtensionValidator
 from django.contrib.auth import get_user_model
 from taggit.managers import TaggableManager
 from ckeditor.fields import RichTextField
+from django.db.models import Sum
 
 import os
 from apps.services import constants
@@ -20,21 +21,24 @@ class PostPublishedManager(models.Manager):
         return super().get_queryset().filter(status='published')
 
 
-# published_related
 class PostPublishedRealtedManager(PostPublishedManager):
-    """Модельный менеджер для опубликованых постов со связанными полями."""
+    """
+    Модельный менеджер для опубликованых постов со связанными полями.
+    Аннотированы кол-вом лайков и отсортированы по дате создания.
+    """
 
     def get_queryset(self):
         queryset = super().get_queryset().select_related(
             'author',
             'author__userprofile',
             'category',
-        ).prefetch_related('tags')
+        ).prefetch_related('tags').annotate(
+            get_sum_rating=Sum('ratings__value')).order_by('-create')
         return queryset
 
 
 class Post(models.Model):
-    """Модель поста."""
+    """Модель: Пост."""
 
     STATUS_OPTIONS = (
         ('published', 'Опубликовано'),
@@ -141,9 +145,12 @@ class Post(models.Model):
                 os.remove(old_post.thumbnail.path)
         super().save(*args, **kwargs)
 
+    def get_sum_rating(self):
+        return sum((rating.value for rating in self.ratings.all()))
+
 
 class Category(MPTTModel):
-    """Древовидная модель категорий с вложенностью."""
+    """Модель: Древовидные категорий с вложенностью."""
 
     title = models.CharField(
         max_length=constants.TITLE_MAX_LENGTH,
@@ -186,7 +193,7 @@ class Category(MPTTModel):
 
 
 class Comment(MPTTModel):
-    """Модель древовыидных комментариев."""
+    """Модель: Древовыидные комментарии."""
 
     STATUS_OPTIONS = (
         ('published', 'Опубликовано'),
@@ -240,3 +247,33 @@ class Comment(MPTTModel):
 
     def __str__(self):
         return f'{self.author}:{self.body}'
+
+
+class PostRating(models.Model):
+    """Модель: Рейтинг постов."""
+
+    post = models.ForeignKey(
+        to=Post,
+        on_delete=models.CASCADE,
+        related_name='ratings',
+        verbose_name='Запись',
+    )
+    user = models.ForeignKey(
+        to=NextgenUser,
+        on_delete=models.CASCADE,
+        related_name='ratings',
+        verbose_name='Пользователь',
+    )
+    value = models.IntegerField(
+        choices=[(1, 'Нравится'), (-1, 'Не нравится')],
+        verbose_name='Значение',
+    )
+
+    class Meta:
+        unique_together = ('post', 'user')
+        indexes = [models.Index(fields=['value'])]
+        verbose_name = 'Рейтинг'
+        verbose_name_plural = 'Рейтинги'
+
+    def __str__(self):
+        return self.post.title

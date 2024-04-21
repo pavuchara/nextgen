@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from django.views.generic import (
+    View,
     ListView,
     DetailView,
     CreateView,
@@ -15,7 +16,7 @@ from django.views.generic import (
 )
 
 from taggit.models import Tag
-from .models import Post, Category, Comment
+from .models import Post, Category, Comment, PostRating
 from .forms import PostCreateForm, PostUpdateForm, CommentCreateForm
 from apps.services.mixins import (
     AuthorRequiredMixin,
@@ -74,6 +75,12 @@ class PostDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            post_rating = PostRating.objects.filter(
+                user=self.request.user, post=self.object
+            ).first()
+            tag_button = post_rating.value if post_rating else None
+            context['tag_button'] = tag_button
         context['title'] = self.object.title
         context['form'] = CommentCreateForm()
         return context
@@ -151,7 +158,7 @@ class PostDeleteView(AuthorRequiredMixin, DeleteView):
     template_name = 'blog/post_delete.html'
 
 
-class CommentCreateView(LoginRequiredMixin, WaringFormMessageMixin, CreateView):
+class CommentCreateView(LoginRequiredMixin, CreateView):
     """Предстваление: Добавление комментария."""
 
     form_class = CommentCreateForm
@@ -209,3 +216,39 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
                 {'error': 'Вы не имеете права удалять этот комментарий'},
                 status=403,
             )
+
+
+class RatingCreateView(View):
+    """Представление: Рейтинг постов."""
+    model = PostRating
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        post_id = request.POST.get('pk')
+        value = int(request.POST.get('value'))
+
+        rating, created = self.model.objects.get_or_create(
+            post_id=post_id,
+            user=user,
+            defaults={'value': value},
+        )
+
+        if not created:
+            if rating.value == value:
+                rating.delete()
+                return JsonResponse({
+                    'status': 'deleted',
+                    'rating_sum': rating.post.get_sum_rating(),
+                })
+            else:
+                rating.value = value
+                rating.save()
+                return JsonResponse({
+                    'status': 'updated',
+                    'rating_sum': rating.post.get_sum_rating(),
+                })
+        else:
+            return JsonResponse({
+                'status': 'created',
+                'rating_sum': rating.post.get_sum_rating(),
+            })

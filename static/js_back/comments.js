@@ -31,6 +31,10 @@ setupEventHandlers();
 
 async function createComment(event) {
   event.preventDefault();
+  if (!grecaptcha.getResponse()) {
+    alert('Пожалуйста, введите капчу');
+    return;
+  }
   commentFormSubmit.disabled = true;
   commentFormSubmit.innerText = "Ожидаем ответа сервера";
   try {

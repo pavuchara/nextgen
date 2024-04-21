@@ -1,3 +1,4 @@
+{% load static %}
 {% for post in posts %}
   <div class="card mb-3">
     <div class="row">
@@ -6,7 +7,7 @@
         <img
           src="{{ post.thumbnail.url }}"
           alt="{{ post.title }}"
-          class="img-fluid h-100 card-img">
+          class="img-fluid card-img">
       </div>
 
       <div class="col-8">
@@ -29,7 +30,22 @@
             <a href="{{ post.category.get_absolute_url }}">
               {{ post.category }}
             </a>
+
           </small>
+
+          {% if not post.get_sum_rating %}
+          <div class="badge bg-secondary text-wrap ms-2" >
+            Рейтинг: 0
+          </div>
+          {% elif post.get_sum_rating > 0 %}
+            <div class="badge bg-success text-wrap ms-2" >
+              Рейтинг: {{ post.get_sum_rating }}
+            </div>
+          {% else %}
+            <div class="badge bg-danger text-wrap ms-2" >
+              Рейтинг: {{ post.get_sum_rating }}
+            </div>
+          {% endif %}
 
         </div>
       </div>
@@ -47,3 +63,4 @@
 
   </div>
 {% endfor %}
+<script src="{% static 'rating.js' %}"></script>

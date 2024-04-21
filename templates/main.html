@@ -7,7 +7,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{{ title }}{% endblock title %}</title>
-
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -35,7 +34,7 @@
     {% include 'includes/footer.html' %}
   </footer>
   <script src="{% static 'backend.js' %}"></script>
-  <script src="{% static 'js_bootstrap/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'bootstrap.bundle.min.js' %}"></script>
   {% block script %}{% endblock %}
 </body>
 </html>

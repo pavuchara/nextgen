@@ -7,29 +7,33 @@
 {% endblock title %}
 
 {% block content %}
+
+  {% if request.user == post.author %}
+  <div class="mb-3">
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'blog:post_update' post.slug %}">Редактировать</a>
+    <a class="btn btn-sm btn-outline-danger" href="{% url 'blog:post_delete' post.slug %}">Удалить</a>
+  </div>
+  {% endif %}
+
   <div class="card mb-3">
     <div class="row">
 
       <div class="col-4">
-        <img src="{{ post.thumbnail.url }}" class="card-img-top" alt="{{ post.title }}">
+        <img src="{{ post.thumbnail.url }}" class="card-img card-img-top" alt="{{ post.title }}">
       </div>
 
       <div class="col-8">
         <div class="card-body">
           <h5>{{ post.title }}</h5>
+
+
           <p class="card-text">{{ post.description|safe }}</p>
           <p class="card-text">{{ post.text|safe }}</p>
           Категория:
-          <a href="{% url 'blog:category' post.category.slug %}">
-            {{ post.category.title }}
-          </a>
-          / Добавил: {{ post.author.username }} /
+          <a href="{% url 'blog:category' post.category.slug %}">{{ post.category.title }}</a>
+          | Добавил: <a href="{% url 'user_app:profile_detail' post.author.username %}">{{ post.author.username }}</a> |
           <small>{{ post.create }}</small>
-
-          {% if request.user == post.author %}
-            <a class="btn btn-sm btn-dark mt-2" href="{% url 'blog:post_update' post.slug %}">Редактировать</a>
-            <a class="btn btn-sm btn-danger mt-2" href="{% url 'blog:post_delete' post.slug %}">Удалить</a>
-          {% endif %}
+          {% include 'includes/likes.html' %}
         </div>
       </div>
 
@@ -45,6 +49,7 @@
     {% endif %}
   </div>
 
+
   <div class="card border-0">
     <div class="card-body">
       <h5 class="card-title">
@@ -53,4 +58,5 @@
       {% include 'blog/comments/comments_list.html' %}
     </div>
   </div>
+  <script src="{% static 'rating.js' %}"></script>
 {% endblock content %}
