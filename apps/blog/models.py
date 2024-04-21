@@ -146,6 +146,7 @@ class Post(models.Model):
         super().save(*args, **kwargs)
 
     def get_sum_rating(self):
+        """Получение рейтинга (лайки/дизлайки)."""
         return sum((rating.value for rating in self.ratings.all()))
 
 

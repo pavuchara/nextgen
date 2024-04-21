@@ -21,11 +21,12 @@ class AuthorRequiredMixin(AccessMixin):
 
 
 class PostListMixin:
-    """Миксин: Модель поста с пагинацией."""
+    """Миксин: Модель поста с пагинацией и шаблоном."""
 
     model = Post
     paginate_by = PAGINATE_POSTS_COUNT
     context_object_name = 'posts'
+    tempalte_name = 'blog/post_list.html'
 
 
 class WaringFormMessageMixin:

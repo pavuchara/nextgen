@@ -9,6 +9,10 @@
         Авторизация
       </div>
 
+      <a class="btn btn-dark mt-3 mb-3" href="{% url 'social:begin' 'google-oauth2' %}">
+        Зайти с помощью Google
+      </a>
+
       <form method="POST">
         {% csrf_token %}
         {% bootstrap_form form %}

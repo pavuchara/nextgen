@@ -1,5 +1,7 @@
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
+from django.core.cache import cache
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import FileExtensionValidator
@@ -30,7 +32,7 @@ class NextgenUser(AbstractUser):
         verbose_name_plural = 'Пользователи'
 
     def save(self, *args, **kwargs):
-        """При сохранении пользователя создается профиль."""
+        """При создании пользователя - создается профиль."""
         super().save(*args, **kwargs)
         if not hasattr(self, 'userprofile'):
             UserProfile.objects.create(user=self)
@@ -79,7 +81,7 @@ class UserProfile(models.Model):
         if not self.pk:
             self.slug = unique_slugify(self, self.user.username)
         else:
-            pre_save_user = UserProfile.objects.get(pk=self.pk)
+            pre_save_user = self.__class__.objects.get(pk=self.pk)
             if (
                 pre_save_user.avatar != self.avatar
                 and os.path.isfile(pre_save_user.avatar.path)
@@ -89,4 +91,14 @@ class UserProfile(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('user_app:profile_detail', kwargs={'username': self.user.username})
+        return reverse('user_app:profile_detail',
+                       kwargs={'username': self.user.username})
+
+    def get_status(self):
+        """Получения статуса пользователя из кеша."""
+        last_seen = cache.get(f'last-seen-{self.user.id}')
+
+        if last_seen is not None:
+            if timezone.now() < (last_seen + timezone.timedelta(seconds=300)):
+                return True
+        return False

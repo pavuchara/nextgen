@@ -28,8 +28,6 @@ from apps.services.mixins import (
 class PostListView(PostListMixin, ListView):
     """Представление: Страница всех постов."""
 
-    tempalte_name = 'blog/post_list.html'
-
     def get_queryset(self):
         queryset = self.model.published_related.all()
         return queryset
@@ -40,14 +38,13 @@ class PostListView(PostListMixin, ListView):
         return context
 
 
-class PostByTagListView(ListView):
-    model = Post
-    template_name = 'blog/post_list.html'
-    context_object_name = 'posts'
-    paginate_by = 10
+class PostByTagListView(PostListMixin, ListView):
+    """Представление: Получение всех постов по тегу."""
+
     tag = None
 
     def get_queryset(self):
+        """Получение queryset: посты сортируются по тегу из пути."""
         self.tag = Tag.objects.get(slug=self.kwargs['tag'])
         queryset = self.model.published_related.filter(
             tags__slug=self.tag.slug)
@@ -74,6 +71,7 @@ class PostDetailView(DetailView):
         return object
 
     def get_context_data(self, **kwargs):
+        """Передача к контект информации ставил ли пользователь лайк."""
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
             post_rating = PostRating.objects.filter(
@@ -88,8 +86,6 @@ class PostDetailView(DetailView):
 
 class CategoryListView(PostListMixin, ListView):
     """Представление: посты по категориям."""
-
-    template_name = 'blog/post_list.html'
 
     def get_queryset(self):
         """

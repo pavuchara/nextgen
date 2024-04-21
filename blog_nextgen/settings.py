@@ -16,7 +16,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # For debug.
 INTERNAL_IPS = [
@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     # Self apps.
     'apps.blog.apps.BlogConfig',
     'apps.user_app.apps.UserAppConfig',
+    'apps.core.apps.CoreConfig',
     # Packages.
     'mptt',
     'django_mptt_admin',
@@ -44,7 +45,8 @@ INSTALLED_APPS = [
     'taggit',
     'django_recaptcha',
     'ckeditor_uploader',
-    'ckeditor'
+    'ckeditor',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +60,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # From packages.
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # Self apps.
+    'apps.user_app.middleware.ActiveUserMiddleware',
 ]
 
 ROOT_URLCONF = 'blog_nextgen.urls'
@@ -73,6 +77,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -86,8 +92,12 @@ WSGI_APPLICATION = 'blog_nextgen.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'nextgenblog',
+        'USER': 'nextgenblog',
+        'PASSWORD': str(os.getenv('POSTGRESQL_PASSWORD')),
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
@@ -109,6 +119,11 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 
 # Internationalization
@@ -156,7 +171,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'user_app.NextgenUser'
 
 # Переадресация на главную после логина.
-LOGIN_REDIRECT_URL = 'pages:homepage'
+LOGIN_REDIRECT_URL = 'blog:home'
 
 # Генерацию слагов для тегов с поддержкой транслитерации.
 TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING = True
@@ -172,3 +187,10 @@ CACHES = {
         'LOCATION': (BASE_DIR / 'cache')
     }
 }
+
+# Обработка ошибки 403 связанной с csrf.
+CSRF_FAILITURE_VIEW = 'apps.core.views.custom_403csrf'
+
+# Ключи авторизации google.
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = str(os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY'))
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = str(os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET'))

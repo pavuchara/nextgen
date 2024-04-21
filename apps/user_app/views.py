@@ -31,6 +31,7 @@ class UserProfileView(PostListMixin, ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
+        """Передача профиля пользователя в шаблон."""
         context = super().get_context_data(**kwargs)
         profile = get_object_or_404(
             UserProfile.objects.select_related('user'),
@@ -52,6 +53,7 @@ class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
         return self.request.user.userprofile
 
     def get_context_data(self, **kwargs):
+        """Передача в шаблон и обьекта пользователя и его профиля."""
         context = super().get_context_data(**kwargs)
         context['title'] = (f'Редактирование профиля пользователя'
                             f' {self.request.user.username}')
@@ -67,6 +69,7 @@ class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
     def form_valid(self, form):
+        """Проверка двух форм: пользователя и его профиля."""
         context = self.get_context_data()
         user_form = context['user_form']
         with transaction.atomic():

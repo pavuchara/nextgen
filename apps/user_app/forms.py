@@ -30,11 +30,6 @@ class UserProfileUpdateForm(forms.ModelForm):
         label='Аватар',
     )
 
-    # recaptcha = ReCaptchaField(
-    #     label='Капча',
-    #     error_messages={'required': 'Пожалуйста, пройдите капчу'},
-    # )
-
     class Meta:
         model = UserProfile
         fields = ('avatar', 'bio')
