@@ -38,7 +38,7 @@ class UserProfileView(PostListMixin, ListView):
             user__username=self.kwargs.get('username')
         )
         context['profile'] = profile
-        context['title'] = f'Профиль: {self.kwargs.get('username')}'
+        context['title'] = f'Профиль: {self.kwargs.get("username")}'
         return context
 
 
