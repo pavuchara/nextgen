@@ -147,7 +147,6 @@ class Post(models.Model):
 
     def get_sum_rating(self):
         """Получение рейтинга (лайки/дизлайки)."""
-        # return sum((rating.value for rating in self.ratings.all()))
         return self.ratings.aggregate(Sum('value', default=0))['value__sum']
 
 
