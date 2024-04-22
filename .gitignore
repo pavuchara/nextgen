@@ -1,3 +1,11 @@
+# Database
 db.sqlite3
-.env
+
+# Media
 media/
+
+# Environments
+venv/
+
+# Кеш
+cache/

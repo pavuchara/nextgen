@@ -20,16 +20,12 @@
           <p class="card-text">{{ post.description|safe }}</p>
 
           <small>Автор
-            <a href="{{ post.author.userprofile.get_absolute_url }}">
-              {{ post.author.username }}
-            </a>, {{ post.create }}
+            <a href="{{ post.author.userprofile.get_absolute_url }}">{{ post.author.username }}</a>, {{ post.create }}
           </small>
 
           <small>
             Категория:
-            <a href="{{ post.category.get_absolute_url }}">
-              {{ post.category }}
-            </a>
+            <a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a>
 
           </small>
 
