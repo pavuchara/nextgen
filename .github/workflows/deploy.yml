@@ -13,6 +13,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
     - name: Deploy to server
       uses: garygrossgarten/github-action-ssh@release
       with:
@@ -20,18 +27,18 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SERVER_PASSWORD }}
         command: |
-          set -e  # Прекращение выполнения скрипта при ошибке
+          set -e
           cd /var/www/nextgenblog/ &&
-          git pull origin master &&  # Простой pull без указания URL
+          git pull git@github.com:pavuchara/blog_nextgen.git master &&
           rm -f .env &&
           touch .env &&
-
+          
           echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env &&
           echo "RECAPTCHA_PUBLIC_KEY=${{ secrets.RECAPTCHA_PUBLIC_KEY }}" >> .env &&
           echo "RECAPTCHA_PRIVATE_KEY=${{ secrets.RECAPTCHA_PRIVATE_KEY }}" >> .env &&
           echo "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}" >> .env &&
           echo "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}" >> .env &&
           echo "POSTGRESQL_PASSWORD=${{ secrets.POSTGRESQL_PASSWORD }}" >> .env &&
-
+          
           systemctl restart gunicorn &&
           systemctl restart nginx
