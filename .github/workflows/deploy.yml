@@ -1,16 +1,18 @@
-name: deploy to dev
+name: Deploy to dev
 
 on:
   push:
-    branch:
-    - master
-
+    branches:
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
     - name: Deploy to server
       uses: garygrossgarten/github-action-ssh@release
       with:
@@ -18,8 +20,9 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SERVER_PASSWORD }}
         command: |
+          set -e  # Прекращение выполнения скрипта при ошибке
           cd /var/www/nextgenblog/ &&
-          git pull git@github.com:pavuchara/blog_nextgen.git master  &&
+          git pull origin master &&  # Простой pull без указания URL
           rm -f .env &&
           touch .env &&
 
