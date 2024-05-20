@@ -9,16 +9,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    # steps:
+    # - name: Checkout repository
+    #   uses: actions/checkout@v2
 
-    - name: Setup SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
+    # - name: Setup SSH
+    #   run: |
+    #     mkdir -p ~/.ssh
+    #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+    #     chmod 600 ~/.ssh/id_rsa
+    #     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
     - name: Deploy to server
       uses: garygrossgarten/github-action-ssh@release
@@ -26,6 +26,7 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SERVER_PASSWORD }}
+        privateKey: ${{ secrets.MY_KEY }}
         command: |
           set -e
           cd /var/www/nextgenblog/ &&
