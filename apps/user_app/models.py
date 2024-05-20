@@ -4,11 +4,11 @@ from django.utils import timezone
 from django.core.cache import cache
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.core.validators import FileExtensionValidator, RegexValidator
+from django.core.validators import FileExtensionValidator
 
 import os
 from apps.services import constants
-from apps.services.utils import unique_slugify, file_directory_path
+from apps.services.utils import unique_slugify
 
 
 class NextgenUser(AbstractUser):

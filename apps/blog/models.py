@@ -6,10 +6,9 @@ from taggit.managers import TaggableManager
 from ckeditor.fields import RichTextField
 from django.db.models import Sum
 
-import os
 from apps.services import constants
 from mptt.models import MPTTModel, TreeForeignKey
-from apps.services.utils import unique_slugify, file_directory_path
+from apps.services.utils import unique_slugify
 
 # Получение модели пользователя.
 NextgenUser = get_user_model()

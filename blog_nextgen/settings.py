@@ -16,9 +16,9 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*','nextgen-blog.pavuk-django.ru']
+ALLOWED_HOSTS = ['*', 'nextgen-blog.pavuk-django.ru']
 
-CSRF_TRUSTED_ORIGINS = ['http://185.198.152.12:8000/','http://nextgen-blog.pavuk-django.ru', 'https://nextgen-blog.pavuk-django.ru/']
+CSRF_TRUSTED_ORIGINS = ['http://185.198.152.12:8000/', 'http://nextgen-blog.pavuk-django.ru', 'https://nextgen-blog.pavuk-django.ru/']
 
 # For debug.
 INTERNAL_IPS = [
