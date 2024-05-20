@@ -1,4 +1,4 @@
-name: deploy
+name: deploy to dev
 
 on:
   push:
@@ -9,6 +9,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to server
       uses: garygrossgarten/github-action-ssh@release
       with:
         host: ${{ secrets.SERVER_HOST }}
