@@ -71,8 +71,8 @@ class Post(models.Model):
     )
     thumbnail = models.ImageField(
         max_length=constants.PATH_MAX_LENGTH,
-        upload_to=file_directory_path,
-        default='default_post.jpg',
+        upload_to='post_images',
+        default='images/default_user.jpg',
         blank=True,
         validators=[FileExtensionValidator(allowed_extensions=(
             'png', 'jpg', 'webp', 'jpeg', 'gif'
@@ -138,11 +138,6 @@ class Post(models.Model):
         """
         if not self.pk:
             self.slug = unique_slugify(self, self.title)
-        else:
-            old_post = Post.objects.get(pk=self.pk)
-            if (old_post.thumbnail != self.thumbnail
-                    and os.path.isfile(old_post.thumbnail.path)):
-                os.remove(old_post.thumbnail.path)
         super().save(*args, **kwargs)
 
     def get_sum_rating(self):

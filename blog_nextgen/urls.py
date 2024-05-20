@@ -15,7 +15,7 @@ urlpatterns = [
     path('', include('apps.user_app.urls', namespace='user_app')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     re_path(r'^oauth/', include('social_django.urls', namespace='social')),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG is True:
     import debug_toolbar

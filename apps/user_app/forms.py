@@ -52,7 +52,4 @@ class UserRegisterForm(UserCreationForm):
 class UserLoginForm(AuthenticationForm):
     """Форма авторизации на сайте."""
 
-    recaptcha = ReCaptchaField(
-        label='Капча',
-        error_messages={'required': 'Пожалуйста, пройдите капчу'},
-    )
+    pass

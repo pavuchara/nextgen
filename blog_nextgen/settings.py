@@ -14,13 +14,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['*','nextgen-blog.pavuk-django.ru']
+
+CSRF_TRUSTED_ORIGINS = ['http://185.198.152.12:8000/','http://nextgen-blog.pavuk-django.ru', 'https://nextgen-blog.pavuk-django.ru/']
 
 # For debug.
 INTERNAL_IPS = [
-    '127.0.0.1',
+    'nextgen-blog.pavuk-django.ru',
 ]
 
 # Application definition
@@ -96,7 +98,7 @@ DATABASES = {
         'NAME': 'nextgenblog',
         'USER': 'nextgenblog',
         'PASSWORD': str(os.getenv('POSTGRESQL_PASSWORD')),
-        'HOST': '127.0.0.1',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
@@ -143,7 +145,7 @@ USE_TZ = True
 
 # Статика.
 STATIC_URL = 'static/'
-STATIC_ROOT = (BASE_DIR / 'static')
+STATIC_ROOT = BASE_DIR / 'static'
 STATICFILES_DIRS = [
     BASE_DIR / STATIC_URL / 'js_back',
     BASE_DIR / STATIC_URL / 'js_bootstrap',
@@ -179,14 +181,6 @@ TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING = True
 # reCAPTCHA secret keys
 RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_PUBLIC_KEY'))
 RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_PRIVATE_KEY'))
-
-# Файловая система кеширования.
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': (BASE_DIR / 'cache')
-    }
-}
 
 # Обработка ошибки 403 связанной с csrf.
 CSRF_FAILITURE_VIEW = 'apps.core.views.custom_403csrf'

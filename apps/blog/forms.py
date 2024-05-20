@@ -7,11 +7,6 @@ from .models import Post, Comment
 class PostCreateForm(forms.ModelForm):
     """Форма для добавления постов."""
 
-    recaptcha = ReCaptchaField(
-        label='Капча',
-        error_messages={'required': 'Пожалуйста, пройдите капчу'},
-    )
-
     class Meta:
         model = Post
         fields = (

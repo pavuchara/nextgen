@@ -1,5 +1,6 @@
 from django.conf import settings
 
+import os
 from uuid import uuid4
 from pytils.translit import slugify
 
@@ -19,6 +20,11 @@ def file_directory_path(instance, filename):
     Наименование фото генерируется лучайным образом.
     """
     filename = f'{uuid4().hex[:8]}.{filename.split(".")[-1]}'
-    path = (f'{settings.MEDIA_ROOT}/images/'
-            f'{instance.__class__.__name__}/{instance.slug}/{filename}')
+    path = os.path.join(
+        settings.MEDIA_ROOT,
+        'images',
+        instance.__class__.__name__,
+        instance.slug,
+        filename
+    )
     return path

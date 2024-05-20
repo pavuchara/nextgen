@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.core.cache import cache
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, RegexValidator
 
 import os
 from apps.services import constants
@@ -52,7 +52,7 @@ class UserProfile(models.Model):
     )
     avatar = models.ImageField(
         max_length=constants.PATH_MAX_LENGTH,
-        upload_to=file_directory_path,
+        upload_to='profile_images',
         default='images/default_user.jpg',
         blank=True,
         validators=[FileExtensionValidator(allowed_extensions=(
