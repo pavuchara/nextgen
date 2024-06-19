@@ -1,0 +1,70 @@
+{% load mptt_tags static %}
+
+<div class="nested-comments">
+  {% for comment in post.comments.all %}
+    <div id="comment-thread-{{ comment.pk }}" class="card border-1 m-1">
+      <div class="row">
+
+        <div class="col-md-1">
+          <img src="{{ comment.author.userprofile.avatar.url }}" style="width: 50px;height: 50px;object-fit: cover;" alt="{{ comment.author }}" class="rounded-circle m-2"/>
+        </div>
+
+        <div class="col-md-11">
+          <div class="card-body">
+
+            <span class="card-title">
+              <a href="{{ comment.author.userprofile.get_absolute_url }}">{{ comment.author }}</a>
+              <time>{{ comment.create }}</time>
+            </span>
+            <p class="card-text">
+              {{ comment.body }}
+            </p>
+
+            <a
+              class="btn btn-sm btn-dark btn-reply"
+              href="#commentForm"
+              data-comment-id="{{ comment.id }}"
+              data-comment-username="{{ comment.author }}"
+              >Ответить
+            </a>
+            {% if request.user == comment.author %}
+              <a class="btn btn-sm btn-danger btn-delete-comment" data-comment-id="{{ comment.id }}" href="{% url 'blog:comment_delete' post.pk comment.id %}">
+                Удалить комментарий
+              </a>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+
+{% if request.user.is_authenticated %}
+  <div class="card border-0">
+    <div class="card-body">
+
+      <h6>Добавиить комментарий:</h6>
+
+      <form method="post" id="commentForm"
+        name="commentForm" data-post-id="{{ post.pk }}">
+        {{ form }}
+        <div class="d-grid gap-2 d-md-block mt-2">
+          <button type="submit" class="btn btn-dark" id="commentSubmit">
+            Добавить комментарий
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+{% else %}
+  <div class="m-3">
+    <a href="{% url 'user_app:login' %}">Авторизируйтесь</a> чтобы оставить комментарий
+  </div>
+{% endif %}
+
+{% block script %}
+  <script src="{% static '/comments.js' %}"></script>
+{% endblock %}

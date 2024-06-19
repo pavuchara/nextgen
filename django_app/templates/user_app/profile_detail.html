@@ -1,0 +1,58 @@
+{% extends 'main.html' %}
+
+{% block title %}
+  {{ title }}
+{% endblock title %}
+
+{% block content %}
+  <div class="card border-0">
+    <div class="card-body">
+      <div class="row">
+
+        <div class="col-md-3">
+          <figure>
+            <img
+              src="{{ profile.avatar.url }}"
+              class="img-fluid rounded-0"
+              alt="{{ profile }}">
+          </figure>
+        </div>
+
+        <div class="col-md-9">
+
+          <h5 class="card-title">
+            {{ profile }}
+          </h5>
+
+          <div class="card-text">
+            <ul>
+              <li>Никнейм: {{ profile.user.username }}</li>
+              {% if profile.user.first_name %}
+                <li>Имя: {{ profile.user.first_name }}</li>
+              {% endif %}
+              {% if profile.user.last_name %}
+                <li>Фамилия: {{ profile.user.last_name }}</li>
+              {% endif %}
+                <li>Заходил: {{ profile.user.last_login }} | {% if profile.get_status %}Онлайн{% else %}Не в сети{% endif %}</li>
+              {% if profile.bio %}
+                <li>О себе: {{ profile.bio }}</li>
+              {% endif %}
+            </ul>
+            {% if request.user == profile.user %}
+              <a href="{% url 'user_app:profile_edit' %}" class="btn btn-sm btn-primary">Редактировать профиль</a>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    {% if posts %}
+      <h3>Посты {{ profile.user.username }}:</h3>
+      {% include 'includes/posts.html' %}
+    {% else %}
+      <h3>{{ profile.user.username }} пока ничего не запостил(</h3>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ title }}{% endblock title %}</title>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+  <header>
+    {% include 'includes/header.html' %}
+  </header>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 p-4">
+          {% include 'includes/view_messages.html' %}
+          {% block content %}
+          {% endblock content %}
+          {% include 'includes/pagination.html' %}
+      </div>
+
+      <div class="col-4 p-4">
+          {% include 'includes/sidebar.html' %}
+      </div>
+    </div>
+  </div>
+
+  <footer class="py-5 bg-dark mt-2 mt-auto">
+    {% include 'includes/footer.html' %}
+  </footer>
+  <script src="{% static 'backend.js' %}"></script>
+  <script src="{% static 'bootstrap.bundle.min.js' %}"></script>
+  {% block script %}{% endblock %}
+</body>
+</html>

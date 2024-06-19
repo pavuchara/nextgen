@@ -1,0 +1,34 @@
+{% extends 'main.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}
+  {{ title }}
+{% endblock title %}
+
+
+{% block content %}
+
+  <div class="card mb-3 border-0 nth-shadow">
+    <div class="card-body">
+
+      <div class="card-title nth-card-title">
+        <h4>Изменение профиля</h4>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form user_form %}
+        {% bootstrap_form form %}
+        <div class="d-grid gap-2 d-md-block mt-2">
+            <button
+              type="submit"
+              class="btn btn-dark"
+              >Подтвердить изменение профиля
+            </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}
