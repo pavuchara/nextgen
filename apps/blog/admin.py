@@ -28,4 +28,5 @@ class CommentAdmin(DjangoMpttAdmin):
 @admin.register(PostRating)
 class PostRating(admin.ModelAdmin):
     """Админ панель рейтинга постов."""
+    
     pass

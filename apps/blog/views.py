@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
@@ -186,7 +188,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
                 'create': comment.create.strftime(
                     '%Y-%b-%d %H:%M:%S'
                 ),
-            }, status=200)
+            }, status=HTTPStatus.OK)
         return redirect(comment.post.get_absolute_url())
 
     def handle_no_permission(self):
@@ -206,7 +208,7 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
         self.object = self.get_object()
         if self.request.user == self.object.author:
             self.object.delete()
-            return HttpResponse(status=200)
+            return HttpResponse(status=HTTPStatus.OK)
         else:
             return JsonResponse(
                 {'error': 'Вы не имеете права удалять этот комментарий'},
