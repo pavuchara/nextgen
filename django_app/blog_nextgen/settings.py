@@ -94,12 +94,12 @@ WSGI_APPLICATION = 'blog_nextgen.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'nextgenblog',
-        'USER': 'nextgenblog',
-        'PASSWORD': str(os.getenv('POSTGRESQL_PASSWORD')),
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': str(os.getenv('PSQL_ENGINE')),
+        'NAME': str(os.getenv('PSQL_DATABASE')),
+        'USER': str(os.getenv('PSQL_USER')),
+        'PASSWORD': str(os.getenv('PSQL_PASSWORD')),
+        'HOST': str(os.getenv('PSQL_HOST')),
+        'PORT': str(os.getenv('PSQL_PORT')),
     }
 }
 

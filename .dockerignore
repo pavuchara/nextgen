@@ -1,0 +1,13 @@
+# Database
+db.sqlite3
+
+# Media
+media/
+
+# Environments
+.env
+venv/
+
+# Кеш
+cache/
+__pycache__
