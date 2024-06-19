@@ -10,3 +10,4 @@ venv/
 
 # Кеш
 cache/
+__pycache__
