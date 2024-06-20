@@ -14,11 +14,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = str(os.getenv('DEBUG')) == 'True'
 
-ALLOWED_HOSTS = ['*', 'nextgen-blog.pavuk-django.ru']
+ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['http://185.198.152.12:8000/', 'http://nextgen-blog.pavuk-django.ru', 'https://nextgen-blog.pavuk-django.ru/']
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1/',
+    'http://127.0.0.1/:80',
+    'http://127.0.0.1:8000/',
+    'http://185.198.152.12:8000/',
+    'http://nextgen-blog.pavuk-django.ru',
+    'https://nextgen-blog.pavuk-django.ru/',
+]
 
 # For debug.
 INTERNAL_IPS = [
@@ -92,16 +100,24 @@ WSGI_APPLICATION = 'blog_nextgen.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': str(os.getenv('PSQL_ENGINE')),
-        'NAME': str(os.getenv('PSQL_DATABASE')),
-        'USER': str(os.getenv('PSQL_USER')),
-        'PASSWORD': str(os.getenv('PSQL_PASSWORD')),
-        'HOST': str(os.getenv('PSQL_HOST')),
-        'PORT': str(os.getenv('PSQL_PORT')),
+if DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': str(os.getenv('PSQL_ENGINE')),
+            'NAME': str(os.getenv('PSQL_DATABASE')),
+            'USER': str(os.getenv('PSQL_USER')),
+            'PASSWORD': str(os.getenv('PSQL_PASSWORD')),
+            'HOST': str(os.getenv('PSQL_HOST')),
+            'PORT': str(os.getenv('PSQL_PORT')),
+        }
+    }
 
 
 # Password validation
@@ -183,7 +199,7 @@ RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_PUBLIC_KEY'))
 RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_PRIVATE_KEY'))
 
 # Обработка ошибки 403 связанной с csrf.
-CSRF_FAILITURE_VIEW = 'apps.core.views.custom_403csrf'
+CSRF_FAILURE_VIEW = 'apps.core.views.custom_403csrf'
 
 # Ключи авторизации google.
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = str(os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY'))
