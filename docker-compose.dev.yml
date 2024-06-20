@@ -1,0 +1,49 @@
+name: blog-nextgen-dev
+
+services:
+
+  web:
+    container_name: web_blog
+    build:
+      context: ./django_app
+      dockerfile: Dockerfile.prod
+    command: gunicorn blog_nextgen.wsgi:application --bind 0.0.0.0:8000
+    # ports:
+    #   - 127.0.0.1:8000:8000
+    volumes:
+      - static-data:/blog_nextgen/static
+      - media-data:/blog_nextgen/media
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  nginx:
+    container_name: nginx_blog
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    volumes:
+      - static-data:/blog_nextgen/static
+      - media-data:/blog_nextgen/media
+    depends_on:
+      - web
+
+  db:
+    container_name: postgres_blog
+    image: postgres:15
+    volumes:
+      - postgres-data:/data/postgres-data
+    env_file:
+      - .env
+    environment:
+    - POSTGRES_USER=${PSQL_USER}
+    - POSTGRES_PASSWORD=${PSQL_PASSWORD}
+    - POSTGRES_DB=${PSQL_DATABASE}
+
+volumes:
+  postgres-data:
+  static-data:
+  media-data:

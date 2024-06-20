@@ -1,4 +1,4 @@
-name: Deploy to dev
+name: Deploy to prod
 
 on:
   push:
@@ -24,11 +24,20 @@ jobs:
           touch .env &&
           
           echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env &&
+          echo "DEBUG=${{ secrets.DJANGO_SECRET_KEY }}" >> .env &&
+
           echo "RECAPTCHA_PUBLIC_KEY=${{ secrets.RECAPTCHA_PUBLIC_KEY }}" >> .env &&
           echo "RECAPTCHA_PRIVATE_KEY=${{ secrets.RECAPTCHA_PRIVATE_KEY }}" >> .env &&
+
           echo "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}" >> .env &&
           echo "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}" >> .env &&
-          echo "POSTGRESQL_PASSWORD=${{ secrets.POSTGRESQL_PASSWORD }}" >> .env &&
+
+          echo "PSQL_ENGINE=${{ secrets.PSQL_ENGINE }}" >> .env &&
+          echo "PSQL_DATABASE=${{ secrets.PSQL_DATABASE }}" >> .env &&
+          echo "PSQL_USER=${{ secrets.PSQL_USER }}" >> .env &&
+          echo "PSQL_PASSWORD=${{ secrets.PSQL_PASSWORD }}" >> .env &&
+          echo "PSQL_HOST=${{ secrets.PSQL_HOST }}" >> .env &&
+          echo "PSQL_PORT=${{ secrets.PSQL_PORT }}" >> .env &&
 
           systemctl restart gunicorn &&
           systemctl restart nginx
