@@ -20,8 +20,6 @@ ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
-    'http://127.0.0.1/',
-    'http://127.0.0.1/:80',
     'http://127.0.0.1:8000/',
     'http://185.198.152.12:8000/',
     'http://nextgen-blog.pavuk-django.ru',
@@ -169,7 +167,7 @@ STATICFILES_DIRS = [
 
 # Медиа.
 MEDIA_URL = 'media/'
-MEDIA_ROOT = (BASE_DIR / 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 

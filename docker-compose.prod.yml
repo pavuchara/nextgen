@@ -12,6 +12,7 @@ services:
     #   - 127.0.0.1:8000:8000
     volumes:
       - static-data:/blog_nextgen/static
+      - media-data:/blog_nextgen/media
     env_file:
       - .env
     depends_on:
@@ -24,6 +25,7 @@ services:
       - 80:80
     volumes:
       - static-data:/blog_nextgen/static
+      - media-data:/blog_nextgen/media
     depends_on:
       - web
 
@@ -43,3 +45,4 @@ services:
 volumes:
   postgres-data:
   static-data:
+  media-data:
