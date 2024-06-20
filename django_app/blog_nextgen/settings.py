@@ -22,7 +22,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000/',
     'http://185.198.152.12:8000/',
-    'http://nextgen-blog.pavuk-django.ru',
+    'http://nextgen-blog.pavuk-django.ru/',
     'https://nextgen-blog.pavuk-django.ru/',
 ]
 
