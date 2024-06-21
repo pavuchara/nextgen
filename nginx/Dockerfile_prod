@@ -1,4 +1,4 @@
 FROM nginx:1.25
 
 RUN rm etc/nginx/conf.d/default.conf
-COPY blog_nextgen.prod.conf etc/nginx/conf.d/
+COPY blog_nextgen_prod.conf etc/nginx/conf.d/

@@ -22,7 +22,7 @@ services:
     container_name: nginx_blog
     build:
       context: ./nginx
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile_prod
     ports:
       - 80:80
       - 443:443
