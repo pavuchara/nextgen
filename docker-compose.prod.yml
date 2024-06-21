@@ -30,7 +30,7 @@ services:
     volumes:
       - static-data:/blog_nextgen/static
       - media-data:/blog_nextgen/media
-      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./nginx/:/etc/nginx/conf.d/:ro
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
     depends_on:
