@@ -25,6 +25,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://185.198.152.12:8000',
     'http://nextgen-blog.pavuk-django.ru',
     'https://nextgen-blog.pavuk-django.ru',
+    'http://nextgen-blog.pavuk-django.ru:443',
+    'https://nextgen-blog.pavuk-django.ru:443',
 ]
 
 CSRF_COOKIE_SECURE = True
