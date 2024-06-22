@@ -38,7 +38,6 @@ async function createComment(event) {
   commentFormSubmit.disabled = true;
   commentFormSubmit.innerText = "Ожидаем ответа сервера";
   try {
-    const csrftoken = getCookie("csrftoken");
     const response = await fetch(`/post/${commentPostId}/comments/create/`, {
       method: 'POST',
       headers: {
@@ -47,9 +46,6 @@ async function createComment(event) {
       },
       body: new FormData(commentForm),
     });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
     const comment = await response.json();
     const formattedDate = new Intl.DateTimeFormat('ru', {
       year: 'numeric',
@@ -89,7 +85,7 @@ async function createComment(event) {
     replyUser();
     setupEventHandlers();
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 }
 
@@ -101,11 +97,10 @@ async function deleteComment(event) {
   event.preventDefault();
   const commentId = this.getAttribute('data-comment-id');
   try {
-    const csrftoken = getCookie("csrftoken");
     const response = await fetch(`/post/${commentPostId}/comments/${commentId}/delete/`, {
       method: 'DELETE',
       headers: {
-          'X-CSRFToken': csrftoken,
+          'X-CSRFToken': getCookie('csrftoken'),
           'Content-Type': 'application/json',
       },
     });
@@ -113,3 +108,8 @@ async function deleteComment(event) {
       this.closest('.card').remove();
     } else {
       console.error('Ошибка при удалении комментария');
+    }
+  } catch (error) {
+    console.error('Ошибка при отправке запроса на удаление комментария:', error);
+  }
+}
