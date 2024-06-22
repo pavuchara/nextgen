@@ -6,7 +6,7 @@ services:
     container_name: web_blog
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.prod
     command: sh ./scripts/startup_prod.sh
     ports:
       - 127.0.0.1:8000:8000
