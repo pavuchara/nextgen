@@ -14,7 +14,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = str(os.getenv('DEBUG')) == 'True'
+# DEBUG = str(os.getenv('DEBUG')) == 'True'
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -105,7 +106,7 @@ WSGI_APPLICATION = 'blog_nextgen.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-if DEBUG:
+if 0:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
