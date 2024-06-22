@@ -40,7 +40,7 @@ services:
     container_name: postgres_blog
     image: postgres:15
     volumes:
-      - postgres-data:/data/postgres-data
+      - postgres-data:/var/lib/postgresql/data
     env_file:
       - .env
     environment:
