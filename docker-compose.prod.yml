@@ -7,7 +7,7 @@ services:
     build:
       context: ./django_app
       dockerfile: Dockerfile.prod
-    command: gunicorn blog_nextgen.wsgi:application --bind 0.0.0.0:8000
+    command: bash ./scripts/startup_prod.sh
     ports:
       - 127.0.0.1:8000:8000
     volumes:
