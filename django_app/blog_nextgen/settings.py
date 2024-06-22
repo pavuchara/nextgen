@@ -30,10 +30,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://nextgen-blog.pavuk-django.ru:443',
 ]
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-CSRF_USE_SESSIONS = False
-
 # For debug.
 INTERNAL_IPS = [
     'nextgen-blog.pavuk-django.ru',
