@@ -5,8 +5,8 @@ services:
   web:
     container_name: web_blog
     build:
-      context: ./django_app
-      dockerfile: Dockerfile.prod
+      context: .
+      dockerfile: ./Dockerfile
     command: sh ./scripts/startup_prod.sh
     ports:
       - 127.0.0.1:8000:8000
