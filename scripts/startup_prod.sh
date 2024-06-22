@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 cd django_app
 python manage.py migrate
 python manage.py collectstatic --no-input
