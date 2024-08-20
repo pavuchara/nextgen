@@ -6,12 +6,12 @@ services:
     container_name: blog_backend
     build: ./django_app/
     restart: always
-    command: sh /blog_nextgen/startup_prod.sh
+    command: sh /blog_nextgen/startup.sh
     env_file: .env
     depends_on:
       - db
     volumes:
-      - static-data:/blog_nextgen/static
+      - static-data:/backend_static
       - media-data:/blog_nextgen/media
 
   nginx:

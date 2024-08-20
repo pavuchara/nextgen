@@ -5,12 +5,12 @@ services:
   blog_backend:
     container_name: blog_backend
     build: ./django_app/
-    command: gunicorn blog_nextgen.wsgi:application --bind 0.0.0.0:8000
+    command: sh /blog_nextgen/startup.sh
     env_file: .env
     depends_on:
       - db
     volumes:
-      - static-data:/blog_nextgen/static
+      - static-data:/backend_static
       - media-data:/blog_nextgen/media
 
   nginx:
