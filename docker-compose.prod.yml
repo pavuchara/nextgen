@@ -26,6 +26,14 @@ services:
     depends_on:
       - blog_backend
 
+  db:
+    container_name: postgres_blog
+    image: postgres:15
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    env_file: .env
+
   celery:
     container_name: celery_blog
     build: ./django_app/
