@@ -31,8 +31,29 @@ services:
     volumes:
       - postgres-data:/data/postgres-data
 
+  celery:
+    container_name: celery_blog
+    build: ./django_app/
+    env_file: .env
+    command: sh /blog_nextgen/selery_startup.sh
+    depends_on:
+      - redis
+      - db
+      - blog_backend
+    volumes:
+      - .:/app
+
+  redis:
+    container_name: redis_blog
+    image: redis:7.4.0
+    expose:
+      - 6379
+    volumes:
+      - redis-data:/data
+
 
 volumes:
   postgres-data:
   static-data:
   media-data:
+  redis-data:
