@@ -3,31 +3,23 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+DEBUG = str(os.getenv('DEBUG')) == 'True'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = str(os.getenv('SECRET_KEY'))
-
-# SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = str(os.getenv('DEBUG')) == 'True'
-DEBUG = False
-
+# TODO Fix this
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
+    os.getenv('HOST_URL'),
     'http://localhost:8000',
     'http://127.0.0.1:8000',
     'http://0.0.0.0:8000',
-    'http://185.198.152.12:8000',
     'http://nextgen-blog.pavuk-django.ru',
     'https://nextgen-blog.pavuk-django.ru',
-    'http://nextgen-blog.pavuk-django.ru:443',
-    'https://nextgen-blog.pavuk-django.ru:443',
 ]
 
 # For debug.
@@ -99,10 +91,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'blog_nextgen.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-if 0:
+if DEBUG:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -112,18 +101,15 @@ if 0:
 else:
     DATABASES = {
         'default': {
-            'ENGINE': str(os.getenv('PSQL_ENGINE')),
-            'NAME': str(os.getenv('PSQL_DATABASE')),
-            'USER': str(os.getenv('PSQL_USER')),
-            'PASSWORD': str(os.getenv('PSQL_PASSWORD')),
-            'HOST': str(os.getenv('PSQL_HOST')),
-            'PORT': str(os.getenv('PSQL_PORT')),
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_DB', 'django'),
+            'USER': os.getenv('POSTGRES_USER', 'django'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+            'HOST': os.getenv('DB_HOST', ''),
+            'PORT': os.getenv('DB_PORT', 5432)
         }
     }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
