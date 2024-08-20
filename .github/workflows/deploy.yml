@@ -38,5 +38,6 @@ jobs:
           echo "DB_HOST=${{ secrets.PSQL_HOST }}" >> .env &&
           echo "DB_PORT=${{ secrets.PSQL_PORT }}" >> .env &&
           echo "DB_NAME=${{ secrets.PSQL_DATABASE }}" >> .env &&
+          echo "HOST_URL=${{ secrets.HOST_URL }}" >> .env &&
 
           docker compose -f docker-compose.prod.yml up -d --build && docker image prune -f
