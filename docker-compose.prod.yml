@@ -6,7 +6,7 @@ services:
     container_name: blog_backend
     build: ./django_app/
     restart: always
-    command: sh ./scripts/startup_prod.sh
+    command: sh /blog_nextgen/startup_prod.sh
     env_file: .env
     depends_on:
       - db
