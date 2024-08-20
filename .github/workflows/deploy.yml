@@ -40,6 +40,3 @@ jobs:
           echo "PSQL_PORT=${{ secrets.PSQL_PORT }}" >> .env &&
 
           docker compose -f docker-compose.prod.yml up -d --build && docker image prune -f
-
-#           systemctl restart gunicorn &&
-#           systemctl restart nginx

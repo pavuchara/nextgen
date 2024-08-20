@@ -2,58 +2,38 @@ name: blog-nextgen-prod
 
 services:
 
-  web:
-    container_name: web_blog
-    build:
-      context: .
-      dockerfile: ./Dockerfile.prod
+  blog_backend:
+    container_name: blog_backend
+    build: ./django_app/
+    restart: always
     command: sh ./scripts/startup_prod.sh
-    ports:
-      - 127.0.0.1:8000:8000
+    env_file: .env
+    depends_on:
+      - db
     volumes:
       - static-data:/blog_nextgen/static
       - media-data:/blog_nextgen/media
-    env_file:
-      - .env
-    depends_on:
-      - db
 
   nginx:
     container_name: nginx_blog
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile_prod
-    ports:
-      - 80:80
-      - 443:443
+    build: ./nginx
     restart: always
+    ports:
+      - 8000:80
     volumes:
       - static-data:/blog_nextgen/static
       - media-data:/blog_nextgen/media
-      - ./nginx/:/etc/nginx/conf.d/:ro
-      - ./certbot/www:/var/www/certbot/:ro
-      - ./certbot/conf/:/etc/nginx/ssl/:ro
     depends_on:
-      - web
+      - blog_backend
 
   db:
     container_name: postgres_blog
     image: postgres:15
+    restart: always
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    env_file:
-      - .env
-    environment:
-      - POSTGRES_USER=${PSQL_USER}
-      - POSTGRES_PASSWORD=${PSQL_PASSWORD}
-      - POSTGRES_DB=${PSQL_DATABASE}
+    env_file: .env
 
-  certbot:
-    container_name: certbot_blog
-    image: certbot/certbot:latest
-    volumes:
-      - ./certbot/www/:/var/www/certbot/:rw
-      - ./certbot/conf/:/etc/letsencrypt/:rw
 
 volumes:
   postgres-data:
